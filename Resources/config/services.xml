@@ -5,7 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
   <services>
-    <service id="brunops_select24entity.select24entity_type" class="Brunops\Select24EntityBundle\Form\Type\Select24EntityType">
+    <service id="brunops.select24entity.form.type.select24entity" class="Brunops\Select24EntityBundle\Form\Type\Select24EntityType">
       <tag name="form.type" alias="brunops_select24entity" />
       <argument type="service" id="doctrine.orm.entity_manager" />
       <argument type="service" id="router" />

@@ -123,7 +123,7 @@ class Select24EntityType extends AbstractType {
   }
 
   /**
-   * pre Symfony 3 compatibility
+   * Pre Symfony 2.8 compatibility
    *
    * @return string
    */
