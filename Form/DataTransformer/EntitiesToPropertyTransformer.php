@@ -66,18 +66,32 @@ class EntitiesToPropertyTransformer implements DataTransformerInterface {
    * @return ArrayCollection
    */
   public function reverseTransform($values) {
+    // $values is empty or not an array, we return an empty ArrayCollection
     if (!is_array($values) || count($values) === 0) {
       return new ArrayCollection();
     }
 
-    // get multiple entities with one query
-    $entities = $this->em->createQueryBuilder()
-            ->select('entity')
-            ->from($this->className, 'entity')
-            ->where('entity.id IN (:ids)')
-            ->setParameter('ids', $values)
-            ->getQuery()
-            ->getResult();
+    // Retrieve all entities matching the IDs (in $values)
+    $entities = new ArrayCollection($this->em->createQueryBuilder()
+                    ->select('entity')
+                    ->from($this->className, 'entity')
+                    ->where('entity.id IN (:ids)')
+                    ->setParameter('ids', $values)
+                    ->getQuery()->getResult());
+
+    // Retrieve all the values that are new.
+    $newEntityValues = new ArrayCollection();
+    $needle = 'new_';
+    foreach ($values as $value) {
+      if (strpos($value, $needle) === 0) {
+        $newEntityValues->add(substr($value, strlen($needle)));
+      }
+    }
+
+    // Add new Entities to array collection
+    if ($newEntityValues->count() != 0) {
+      $entities->set('toCreate', $newEntityValues);
+    }
 
     return $entities;
   }

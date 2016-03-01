@@ -72,8 +72,9 @@ twig:
         - 'BrunopsSelect24EntityBundle:Form:fields.html.twig'
 
 ```
+
 * Load the Javascript on the page. The simplest way is to add the following to your layout file. Don't forget to run console assets:install. Alternatively, do something more sophisticated with Assetic.
-```
+```html
 <script src="{{ asset('bundles/brunopsselect24entity/js/select24entity.js') }}"></script>
 ```
 
@@ -84,7 +85,6 @@ The following works on Symfony 2.8 (and probably Symfony 3, but not tested yet).
 Select24Entity is simple to use. In the buildForm method of a form type class, specify `Select24EntityType::class` as the type where you would otherwise use `entity:class`.
 
 Here's an example:
-
 ```php
 $builder
    ->add('country', Select24EntityType::class, [
@@ -101,10 +101,18 @@ $builder
             'placeholder' => 'Select a country',
         ])
 ```
+
 Put this at the top of the file with the form type class:
 ```php
 use Brunops\Select24EntityBundle\Form\Type\Select24EntityType;
 ```
+
+In the template where you will use the field, you must activate it like you would with any Select2 field, using something like this:
+```javascript
+$('.select24entity').select24entity();
+```
+
+Inside the parenthesis, you can pass any options that [Select2](https://select2.github.io/) can accept.
 
 ## Options
 Defaults will be used for some if not set.
@@ -142,4 +150,40 @@ The controller should return a `JSON` array in the following format. The propert
   { id: 1, text: 'Displayed Text 1' },
   { id: 2, text: 'Displayed Text 2' }
 ]
+```
+
+## Select2 Taggable fields
+If you want to use [Select2 Tags fields](https://select2.github.io/examples.html#tags), you need to do two things:
+
+1. Activate the field with tags attribute to true:
+```javascript
+$(".select24entity").select2({
+  tags: true
+});
+```
+
+2. Define a [Data Transformer](http://symfony.com/doc/2.8/cookbook/form/data_transformers.html) that act similar to this:
+```php
+// Transform should return the same thing as the argument, Select24Entity will do the job.
+public function transform($entities) {
+  return $entities;
+}
+
+// This data transformer will receive the entities already parsed through the Select24Entity data transformer, alongside a key 'toCreate' if there is something to create.
+public function reverseTransform($entities) {
+  if ($entities->containsKey('toCreate')) {
+    $toCreate = $entities->get('toCreate');
+    $entities->remove('toCreate'); // We need to remove the key so that the Symfony Form component won't try to read it as if it was of same type of all other $entities
+
+    // Simple loop to create the entities. Don't forget to persist them!
+    foreach ($toCreate as $value) {
+      if ($this->is_valid($value)) { // Some validation
+        $newEntity = $this->createAndPersistEntity($value); // Create the entity object and persist it
+        $entities->add($newEntity); // Add the entity to the ArrayCollection
+      }
+    }
+  }
+
+  return $entities;
+}
 ```
