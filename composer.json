@@ -1,25 +1,32 @@
 {
-    "name": "tetranz/select2entity-bundle",
-    "type": "symfony-bundle",
-    "description": "A Symfony2 bundle that integrates Select2 as a drop-in replacement for a standard entity field on a Symfony form.",
-    "keywords": ["symfony","select2", "typeahead","autocomplete"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Ross Keatinge",
-            "email": "tetranz@gmail.com"
-        }
-    ],
-    "require": {
-        "symfony/symfony": ">=2.2",
-        "doctrine/orm": ">=2.2"
+  "name": "brunops/select24entity-bundle",
+  "type": "symfony-bundle",
+  "description": "A fork of Select24Entity by Brunops. It's a Symfony2 bundle that integrates Select2 as a drop-in replacement for a standard entity field on a Symfony form.",
+  "keywords": ["symfony", "select2", "autocomplete"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Bruno Paré-Simard",
+      "email": "bruno.paresimard@gmail.com"
     },
-    "autoload": {
-        "psr-0": { "Tetranz\\Select2EntityBundle": "" }
-    },
-    "target-dir": "Tetranz/Select2EntityBundle",
-    "extra": {
-        "branch-alias": {
-        }
+    {
+      "name": "Ross Keatinge",
+      "email": "brunops@gmail.com",
+      "role": "Original Developer"
     }
+  ],
+  "require": {
+    "symfony/symfony": ">=2.2",
+    "doctrine/orm": ">=2.2"
+  },
+  "autoload": {
+    "psr-0": {
+      "Brunops\\Select24EntityBundle": ""
+    }
+  },
+  "target-dir": "Brunops/Select24EntityBundle",
+  "extra": {
+    "branch-alias": {
+    }
+  }
 }

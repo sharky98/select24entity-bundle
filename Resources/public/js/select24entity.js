@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $.fn.select2entity = function(action) {
+  $.fn.select24entity = function(action) {
     if(action){
       this.select2(action);
       return this;
@@ -22,5 +22,5 @@ $(document).ready(function () {
     return this;
   };
 
-  $('.select2entity').select2entity();
+  $('.select24entity').select24entity();
 });

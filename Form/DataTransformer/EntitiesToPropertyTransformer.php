@@ -1,6 +1,6 @@
 <?php
 
-namespace Tetranz\Select2EntityBundle\Form\DataTransformer;
+namespace Brunops\Select24EntityBundle\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
@@ -11,7 +11,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  * Data transformer for multiple mode (i.e., multiple = true)
  *
  * Class EntitiesToPropertyTransformer
- * @package Tetranz\Select2EntityBundle\Form\DataTransformer
+ * @package Brunops\Select24EntityBundle\Form\DataTransformer
  */
 class EntitiesToPropertyTransformer implements DataTransformerInterface
 {

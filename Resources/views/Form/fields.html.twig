@@ -1,4 +1,4 @@
-{% block tetranz_select2entity_widget %}
+{% block brunops_select24entity_widget %}
     {% set attr = attr|merge({
     'data-ajax--url':remote_path,
     'data-ajax--cache': cache ? 'true' : 'false',
@@ -7,7 +7,7 @@
     'data-language':language,
     'data-minimum-input-length':minimum_input_length,
     'data-placeholder':placeholder|trans({}, translation_domain),
-    'class' : (attr.class|default('') ~ ' select2entity form-control')|trim
+    'class' : (attr.class|default('') ~ ' select24entity form-control')|trim
     }) %}
 
     {% if multiple %}

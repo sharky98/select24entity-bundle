@@ -1,6 +1,6 @@
 <?php
 
-namespace Tetranz\Select2EntityBundle\Form\DataTransformer;
+namespace Brunops\Select24EntityBundle\Form\DataTransformer;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -10,7 +10,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  * Data transformer for single mode (i.e., multiple = false)
  *
  * Class EntityToPropertyTransformer
- * @package Tetranz\Select2EntityBundle\Form\DataTransformer
+ * @package Brunops\Select24EntityBundle\Form\DataTransformer
  */
 class EntityToPropertyTransformer implements DataTransformerInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tetranz\Select2EntityBundle\Form\Type;
+namespace Brunops\Select24EntityBundle\Form\Type;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
@@ -10,15 +10,15 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Tetranz\Select2EntityBundle\Form\DataTransformer\EntitiesToPropertyTransformer;
-use Tetranz\Select2EntityBundle\Form\DataTransformer\EntityToPropertyTransformer;
+use Brunops\Select24EntityBundle\Form\DataTransformer\EntitiesToPropertyTransformer;
+use Brunops\Select24EntityBundle\Form\DataTransformer\EntityToPropertyTransformer;
 
 /**
  *
- * Class Select2EntityType
- * @package Tetranz\Select2EntityBundle\Form\Type
+ * Class Select24EntityType
+ * @package Brunops\Select24EntityBundle\Form\Type
  */
-class Select2EntityType extends AbstractType
+class Select24EntityType extends AbstractType
 {
     /** @var EntityManager */
     protected $em;
@@ -139,6 +139,6 @@ class Select2EntityType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'tetranz_select2entity';
+        return 'brunops_select24entity';
     }
 }
