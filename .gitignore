@@ -17,3 +17,6 @@
 
 # Netbeans Project
 /nbproject/private/
+
+# Symfony Bundle, ignore composer.lock
+/composer.lock
