@@ -1,6 +1,6 @@
 $(document).ready(function () {
-  $.fn.select24entity = function(action) {
-    if(action){
+  $.fn.select24entity = function (action) {
+    if (action) {
       this.select2(action);
       return this;
     }

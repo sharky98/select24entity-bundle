@@ -13,68 +13,65 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  * Class EntitiesToPropertyTransformer
  * @package Brunops\Select24EntityBundle\Form\DataTransformer
  */
-class EntitiesToPropertyTransformer implements DataTransformerInterface
-{
-    /** @var EntityManager */
-    protected $em;
-    /** @var  string */
-    protected $className;
-    /** @var  string */
-    protected $textProperty;
+class EntitiesToPropertyTransformer implements DataTransformerInterface {
 
-    /**
-     * @param EntityManager $em
-     * @param string $class
-     * @param string|null $textProperty
-     */
-    public function __construct(EntityManager $em, $class, $textProperty = null)
-    {
-        $this->em = $em;
-        $this->className = $class;
-        $this->textProperty = $textProperty;
+  /** @var EntityManager */
+  protected $em;
+
+  /** @var  string */
+  protected $className;
+
+  /** @var  string */
+  protected $textProperty;
+
+  /**
+   * @param EntityManager $em
+   * @param string $class
+   * @param string|null $textProperty
+   */
+  public function __construct(EntityManager $em, $class, $textProperty = null) {
+    $this->em = $em;
+    $this->className = $class;
+    $this->textProperty = $textProperty;
+  }
+
+  /**
+   * Transform initial entities to array
+   *
+   * @param mixed $entities
+   * @return array
+   */
+  public function transform($entities) {
+    if (is_null($entities) || count($entities) === 0) {
+      return array();
     }
 
-    /**
-     * Transform initial entities to array
-     *
-     * @param mixed $entities
-     * @return array
-     */
-    public function transform($entities)
-    {
-        if (is_null($entities) || count($entities) === 0) {
-            return array();
-        }
+    $data = array();
 
-        $data = array();
+    $accessor = PropertyAccess::createPropertyAccessor();
 
-        $accessor = PropertyAccess::createPropertyAccessor();
+    foreach ($entities as $entity) {
+      $text = is_null($this->textProperty) ? (string) $entity : $accessor->getValue($entity, $this->textProperty);
 
-        foreach ($entities as $entity) {
-            $text = is_null($this->textProperty)
-                ? (string)$entity
-                : $accessor->getValue($entity, $this->textProperty);
-
-            $data[$accessor->getValue($entity, 'id')] = $text;
-        }
-
-        return $data;
+      $data[$accessor->getValue($entity, 'id')] = $text;
     }
 
-    /**
-     * Transform array to a collection of entities
-     *
-     * @param array $values
-     * @return ArrayCollection
-     */
-    public function reverseTransform($values)
-    {
-        if (!is_array($values) || count($values) === 0) {
-            return new ArrayCollection();
-        }
+    return $data;
+  }
 
-        // get multiple entities with one query
-        $entities = $this->em->createQueryBuilder()
+  /**
+   * Transform array to a collection of entities
+   *
+   * @param array $values
+   * @return ArrayCollection
+   */
+  public function reverseTransform($values) {
+    if (!is_array($values) || count($values) === 0) {
+      return new ArrayCollection();
+    }
+
+    // get multiple entities with one query
+    $entities = $this->em->createQueryBuilder()
             ->select('entity')
             ->from($this->className, 'entity')
             ->where('entity.id IN (:ids)')
@@ -82,6 +79,7 @@ class EntitiesToPropertyTransformer implements DataTransformerInterface
             ->getQuery()
             ->getResult();
 
-        return $entities;
-    }
+    return $entities;
+  }
+
 }

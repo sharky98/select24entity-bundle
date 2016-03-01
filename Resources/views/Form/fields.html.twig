@@ -1,5 +1,5 @@
 {% block brunops_select24entity_widget %}
-    {% set attr = attr|merge({
+  {% set attr = attr|merge({
     'data-ajax--url':remote_path,
     'data-ajax--cache': cache ? 'true' : 'false',
     'data-ajax--delay':delay,
@@ -10,21 +10,21 @@
     'class' : (attr.class|default('') ~ ' select24entity form-control')|trim
     }) %}
 
-    {% if multiple %}
-        {% set attr = attr|merge({'multiple':'multiple'}) %}
-    {% endif %}
+  {% if multiple %}
+    {% set attr = attr|merge({'multiple':'multiple'}) %}
+  {% endif %}
 
-    {% if allow_clear %}
-        {% set attr = attr|merge({'data-allow-clear': 'true'}) %}
-    {% endif %}
+  {% if allow_clear %}
+    {% set attr = attr|merge({'data-allow-clear': 'true'}) %}
+  {% endif %}
 
-    {% spaceless %}
-        <select {{ block('widget_attributes') }}>
-            {% if value is iterable %}
-                {% for id, label in value %}
-                    <option value="{{ id }}" selected="selected">{{ label }}</option>
-                {% endfor %}
-            {% endif %}
-        </select>
-    {% endspaceless %}
+  {% spaceless %}
+    <select {{ block('widget_attributes') }}>
+      {% if value is iterable %}
+        {% for id, label in value %}
+          <option value="{{ id }}" selected="selected">{{ label }}</option>
+        {% endfor %}
+      {% endif %}
+    </select>
+  {% endspaceless %}
 {% endblock %}

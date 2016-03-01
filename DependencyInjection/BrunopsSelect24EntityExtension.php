@@ -12,24 +12,24 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
-class BrunopsSelect24EntityExtension extends Extension
-{
-    /**
-     * {@inheritDoc}
-     */
-    public function load(array $configs, ContainerBuilder $container)
-    {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+class BrunopsSelect24EntityExtension extends Extension {
 
-        // set parameters with these settings so they'll be available in the service definition xml
-        $varNames = ['minimum_input_length', 'page_limit', 'allow_clear', 'delay', 'language', 'cache'];
+  /**
+   * {@inheritDoc}
+   */
+  public function load(array $configs, ContainerBuilder $container) {
+    $configuration = new Configuration();
+    $config = $this->processConfiguration($configuration, $configs);
 
-        foreach($varNames as $varName) {
-            $container->setParameter("brunops_select24entity.$varName", $config[$varName]);
-        }
+    // set parameters with these settings so they'll be available in the service definition xml
+    $varNames = ['minimum_input_length', 'page_limit', 'allow_clear', 'delay', 'language', 'cache'];
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
+    foreach ($varNames as $varName) {
+      $container->setParameter("brunops_select24entity.$varName", $config[$varName]);
     }
+
+    $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+    $loader->load('services.xml');
+  }
+
 }
