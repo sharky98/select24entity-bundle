@@ -1,7 +1,7 @@
 select2entity-bundle
 ====================
 
-##Introduction##
+##Introduction
 
 This is a Symfony2 bundle which enables the popular [Select2](https://select2.github.io) component to be used as a drop-in replacement for a standard entity field on a Symfony form.
 
@@ -13,7 +13,7 @@ The project was inspired by [lifo/typeahead-bundle](https://github.com/lifo101/t
 
 Thanks to @ismailbaskin we now have Select2 version 4 compatibility.
 
-##Screenshots##
+##Screenshots
 
 This is a form with a single selection field list expanded.
 
@@ -23,7 +23,7 @@ This is a form with a multiple selection field list expanded.
 
 ![Multiple select example](Resources/doc/img/multi.png)
 
-##Installation##
+##Installation
 
 Select2 must be installed and working first. I hope to setup a demo site but my setup is basically [BraincraftedBootstrapBundle](http://bootstrap.braincrafted.com) with Select2 installed for Bootstrap 3. Once the Braincrafted bundle is working, the only files I've needed to install are:
 
@@ -71,7 +71,7 @@ twig:
 <script src="{{ asset('bundles/tetranzselect2entity/js/select2entity.js') }}"></script>
 ```
 
-##How to use##
+##How to use
 
 The following is for Symfony 3. The latest version works on both Symfony 2 and Symfony 2 but see https://github.com/tetranz/select2entity-bundle/tree/v2.1 for Symfony 2 configuration and use.
 
@@ -100,7 +100,7 @@ Put this at the top of the file with the form type class:
 use Tetranz\Select2EntityBundle\Form\Type\Select2EntityType;
 ```
 
-##Options##
+##Options
 Defaults will be used for some if not set.
 * `class` is your entity class. Required
 * `text_property` This is the entity property used to retrieve the text for existing data. 
@@ -128,7 +128,7 @@ tetranz_select2_entity:
     cache: false
 ```
 
-##AJAX Response##
+##AJAX Response
 The controller should return a `JSON` array in the following format. The properties must be `id` and `text`.
 
 ```javascript
