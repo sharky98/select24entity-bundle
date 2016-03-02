@@ -57,7 +57,7 @@ Note that this only works with Select2 version 4.
 * Run `php composer.phar update brunops/select24entity-bundle` in your project root.
 * Update your project `app/AppKernel.php` file and add this bundle to the $bundles array:
 
-```php
+```php?start_inline=1
 $bundles = array(
     // ...
     new Brunops\Select24EntityBundle\BrunopsSelect24EntityBundle(),
@@ -74,6 +74,7 @@ twig:
 ```
 
 * Load the Javascript on the page. The simplest way is to add the following to your layout file. Don't forget to run console assets:install. Alternatively, do something more sophisticated with Assetic.
+
 ```html
 <script src="{{ asset('bundles/brunopsselect24entity/js/select24entity.js') }}"></script>
 ```
@@ -85,7 +86,7 @@ The following works on Symfony 2.8 (and probably Symfony 3, but not tested yet).
 Select24Entity is simple to use. In the buildForm method of a form type class, specify `Select24EntityType::class` as the type where you would otherwise use `entity:class`.
 
 Here's an example:
-```php
+```php?start_inline=1
 $builder
    ->add('country', Select24EntityType::class, [
             'multiple' => true,
@@ -103,7 +104,7 @@ $builder
 ```
 
 Put this at the top of the file with the form type class:
-```php
+```php?start_inline=1
 use Brunops\Select24EntityBundle\Form\Type\Select24EntityType;
 ```
 
@@ -156,14 +157,16 @@ The controller should return a `JSON` array in the following format. The propert
 If you want to use [Select2 Tags fields](https://select2.github.io/examples.html#tags), you need to do two things:
 
 1. Activate the field with tags attribute to true:
+
 ```javascript
 $(".select24entity").select2({
-  tags: true
+    tags: true
 });
 ```
 
 2. Define a [Data Transformer](http://symfony.com/doc/2.8/cookbook/form/data_transformers.html) that act similar to this:
-```php
+
+```php?start_inline=1
 // Transform should return the same thing as the argument, Select24Entity will do the job.
 public function transform($entities) {
   return $entities;
@@ -174,7 +177,6 @@ public function reverseTransform($entities) {
   if ($entities->containsKey('toCreate')) {
     $toCreate = $entities->get('toCreate');
     $entities->remove('toCreate'); // We need to remove the key so that the Symfony Form component won't try to read it as if it was of same type of all other $entities
-
     // Simple loop to create the entities. Don't forget to persist them!
     foreach ($toCreate as $value) {
       if ($this->is_valid($value)) { // Some validation
@@ -183,7 +185,6 @@ public function reverseTransform($entities) {
       }
     }
   }
-
   return $entities;
 }
 ```
