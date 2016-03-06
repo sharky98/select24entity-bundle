@@ -57,7 +57,7 @@ Note that this only works with Select2 version 4.
 * Run `php composer.phar update brunops/select24entity-bundle` in your project root.
 * Update your project `app/AppKernel.php` file and add this bundle to the $bundles array:
 
-```php?start_inline=1
+```php
 $bundles = array(
     // ...
     new Brunops\Select24EntityBundle\BrunopsSelect24EntityBundle(),
@@ -86,7 +86,7 @@ The following works on Symfony 2.8 (and probably Symfony 3, but not tested yet).
 Select24Entity is simple to use. In the buildForm method of a form type class, specify `Select24EntityType::class` as the type where you would otherwise use `entity:class`.
 
 Here's an example:
-```php?start_inline=1
+```php
 $builder
    ->add('country', Select24EntityType::class, [
             'multiple' => true,
@@ -104,7 +104,7 @@ $builder
 ```
 
 Put this at the top of the file with the form type class:
-```php?start_inline=1
+```php
 use Brunops\Select24EntityBundle\Form\Type\Select24EntityType;
 ```
 
@@ -166,7 +166,7 @@ $(".select24entity").select2({
 
 2. Define a [Data Transformer](http://symfony.com/doc/2.8/cookbook/form/data_transformers.html) that act similar to this:
 
-```php?start_inline=1
+```php
 // Transform should return the same thing as the argument, Select24Entity will do the job.
 public function transform($entities) {
   return $entities;
