@@ -1,17 +1,17 @@
 {
   "name": "brunops/select24entity-bundle",
   "type": "symfony-bundle",
-  "description": "A fork of Select24Entity by Brunops. It's a Symfony2 bundle that integrates Select2 as a drop-in replacement for a standard entity field on a Symfony form.",
+  "description": "It's a Symfony2 bundle that integrates Select2 as a drop-in replacement for a standard entity field on a Symfony form.",
   "keywords": ["symfony", "select2", "autocomplete"],
   "license": "MIT",
   "authors": [
     {
       "name": "Bruno Paré-Simard",
-      "email": "bruno.paresimard@gmail.com"
+      "email": "dev@brunops.com"
     },
     {
       "name": "Ross Keatinge",
-      "email": "brunops@gmail.com",
+      "email": "tetranz@gmail.com",
       "role": "Original Developer"
     }
   ],
