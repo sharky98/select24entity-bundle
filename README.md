@@ -159,7 +159,7 @@ If you want to use [Select2 Tags fields](https://select2.github.io/examples.html
 1. Activate the field with tags attribute to true:
 
 ```javascript
-$(".select24entity").select2({
+$(".select24entity").select24entity({
     tags: true
 });
 ```
