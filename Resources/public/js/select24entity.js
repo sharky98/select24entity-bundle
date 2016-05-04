@@ -13,9 +13,9 @@ $(document).ready(function () {
             results: data
           };
         },
-        cache: true,
-        tags: false
-      }
+        cache: true
+      },
+      tags: false
     };
 
     // Extend the parameters array with the one in arguments
