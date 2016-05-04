@@ -21,6 +21,9 @@ $(document).ready(function () {
     // Extend the parameters array with the one in arguments
     $.extend(select24entityParam, action);
 
+    // Responsive by default
+    this.attr('style', 'width: 100%');
+
     // Activate the select2 field
     this.select2(select24entityParam);
 
