@@ -21,7 +21,7 @@ class BrunopsSelect24EntityExtension extends Extension {
     $configuration = new Configuration();
     $config = $this->processConfiguration($configuration, $configs);
 
-    $container->setParameter("tetranz_select2_entity.config", $config);
+    $container->setParameter("brunops_select24entity.config", $config);
 
     $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
     $loader->load('services.xml');
