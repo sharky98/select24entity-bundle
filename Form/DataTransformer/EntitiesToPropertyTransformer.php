@@ -2,9 +2,10 @@
 
 namespace Brunops\Select24EntityBundle\Form\DataTransformer;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Exception\DriverException;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
@@ -15,7 +16,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  */
 class EntitiesToPropertyTransformer implements DataTransformerInterface {
 
-  /** @var EntityManager */
+  /** @var EntityManagerInterface */
   protected $em;
 
   /** @var  string */
@@ -24,15 +25,20 @@ class EntitiesToPropertyTransformer implements DataTransformerInterface {
   /** @var  string */
   protected $textProperty;
 
+  /** @var  string */
+  protected $primaryKey;
+
   /**
-   * @param EntityManager $em
+   * @param EntityManagerInterface $em
    * @param string $class
    * @param string|null $textProperty
+   * @param string $primaryKey
    */
-  public function __construct(EntityManager $em, $class, $textProperty = null) {
+  public function __construct(EntityManagerInterface $em, $class, $textProperty = null, $primaryKey = 'id') {
     $this->em = $em;
     $this->className = $class;
     $this->textProperty = $textProperty;
+    $this->primaryKey = $primaryKey;
   }
 
   /**
@@ -42,7 +48,7 @@ class EntitiesToPropertyTransformer implements DataTransformerInterface {
    * @return array
    */
   public function transform($entities) {
-    if (is_null($entities) || count($entities) === 0) {
+    if (empty($entities)) {
       return array();
     }
 
@@ -52,8 +58,7 @@ class EntitiesToPropertyTransformer implements DataTransformerInterface {
 
     foreach ($entities as $entity) {
       $text = is_null($this->textProperty) ? (string) $entity : $accessor->getValue($entity, $this->textProperty);
-
-      $data[$accessor->getValue($entity, 'id')] = $text;
+      $data[$accessor->getValue($entity, $this->primaryKey)] = $text;
     }
 
     return $data;
@@ -63,34 +68,40 @@ class EntitiesToPropertyTransformer implements DataTransformerInterface {
    * Transform array to a collection of entities
    *
    * @param array $values
-   * @return ArrayCollection
+   * @return array
    */
   public function reverseTransform($values) {
-    // $values is empty or not an array, we return an empty ArrayCollection
-    if (!is_array($values) || count($values) === 0) {
-      return new ArrayCollection();
+    if (!is_array($values) || empty($values)) {
+      return array();
     }
 
-    // Retrieve all entities matching the IDs (in $values)
-    $entities = new ArrayCollection($this->em->createQueryBuilder()
-                    ->select('entity')
-                    ->from($this->className, 'entity')
-                    ->where('entity.id IN (:ids)')
-                    ->setParameter('ids', $values)
-                    ->getQuery()->getResult());
+    try {
+      // get multiple entities with one query
+      $entities = new ArrayCollection(
+              $this->em->createQueryBuilder()
+                      ->select('entity')
+                      ->from($this->className, 'entity')
+                      ->where('entity.' . $this->primaryKey . ' IN (:ids)')
+                      ->setParameter('ids', $values)
+                      ->getQuery()->getResult()
+      );
 
-    // Retrieve all the values that are new.
-    $newEntityValues = new ArrayCollection();
-    $needle = 'new_';
-    foreach ($values as $value) {
-      if (strpos($value, $needle) === 0) {
-        $newEntityValues->add(substr($value, strlen($needle)));
+      // Retrieve all the values that are new.
+      $newEntityValues = new ArrayCollection();
+      $needle = 'new_';
+      foreach ($values as $value) {
+        if (strpos($value, $needle) === 0) {
+          $newEntityValues->add(substr($value, strlen($needle)));
+        }
       }
-    }
 
-    // Add new Entities to array collection
-    if ($newEntityValues->count() != 0) {
-      $entities->set('toCreate', $newEntityValues);
+      // Add new Entities to array collection
+      if ($newEntityValues->count() != 0) {
+        $entities->set('toCreate', $newEntityValues);
+      }
+    } catch (DriverException $ex) {
+      // this will happen if the form submits invalid data
+      throw new TransformationFailedException('One or more id values are invalid');
     }
 
     return $entities;

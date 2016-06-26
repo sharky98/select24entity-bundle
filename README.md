@@ -45,11 +45,11 @@ Alternatively, minified versions of select2.js and select2.css can be loaded fro
 
 ```javascript
 {
+  // ...
+  "require": {
     // ...
-    "require": {
-        // ...
-        "brunops/select24entity-bundle": "dev-master"
-    }
+    "brunops/select24entity-bundle": "dev-master"
+  }
 }
 ```
 Note that this only works with Select2 version 4.
@@ -59,8 +59,8 @@ Note that this only works with Select2 version 4.
 
 ```php
 $bundles = array(
-    // ...
-    new Brunops\Select24EntityBundle\BrunopsSelect24EntityBundle(),
+  // ...
+  new Brunops\Select24EntityBundle\BrunopsSelect24EntityBundle(),
 );
 ```
 
@@ -68,8 +68,8 @@ $bundles = array(
 
 ```yaml
 twig:
-    form_themes:
-        - 'BrunopsSelect24EntityBundle:Form:fields.html.twig'
+  form_themes:
+    - 'BrunopsSelect24EntityBundle:Form:fields.html.twig'
 
 ```
 
@@ -88,19 +88,21 @@ Select24Entity is simple to use. In the buildForm method of a form type class, s
 Here's an example:
 ```php
 $builder
-   ->add('country', Select24EntityType::class, [
-            'multiple' => true,
-            'remote_route' => 'brunops_test_default_countryquery',
-            'class' => '\Brunops\TestBundle\Entity\Country',
-            'text_property' => 'name',
-            'minimum_input_length' => 2,
-            'page_limit' => 10,
-            'allow_clear' => true,
-            'delay' => 250,
-            'cache' => true,
-            'language' => 'en',
-            'placeholder' => 'Select a country',
-        ])
+  ->add('country', Select24EntityType::class, [
+    'multiple' => true,
+    'remote_route' => 'brunops_test_default_countryquery',
+    'class' => '\Brunops\TestBundle\Entity\Country',
+    'primary_key' => 'id',
+    'text_property' => 'name',
+    'minimum_input_length' => 2,
+    'page_limit' => 10,
+    'allow_clear' => true,
+    'delay' => 250,
+    'cache' => true,
+    'cache_timeout' => 60000, // if 'cache' is true
+    'language' => 'en',
+    'placeholder' => 'Select a country',
+  ])
 ```
 
 Put this at the top of the file with the form type class:
@@ -118,6 +120,7 @@ Inside the parenthesis, you can pass any options that [Select2](https://select2.
 ## Options
 Defaults will be used for some if not set.
 * `class` is your entity class. Required
+* `primary_key` is the name of the property used to uniquely identify entities. Defaults to 'id'
 * `text_property` This is the entity property used to retrieve the text for existing data.
 If text_property is omitted then the entity is cast to a string. This requires it to have a __toString() method.
 * `multiple` True for multiple select (many to many). False for single (many to one) select.
@@ -127,7 +130,9 @@ If text_property is omitted then the entity is cast to a string. This requires i
 * `delay` The delay in milliseconds after a keystroke before trigging another AJAX request. Defaults to 250 ms.
 * `placeholder` Placeholder text.
 * `language` i18n language code. Defaults to en.
-* `cache` Enable AJAX cache. The use of this is a little unclear at Select2. Defaults to true as per Select2 examples.
+* `cache` Enable AJAX cache. Results will be cached for each 'term' queried.
+* `cache_timeout` How long to cache a query in milliseconds. Setting to `0` will cause the cache to never timeout _(60000 = 60 seconds)_
+* `transformer` The fully qualified class name of a custom transformer if you need that flexibility as described below.
 
 The url of the remote query can be given by either of two ways: `remote_route` is the Symfony route. `remote_params` can be optionally specified to provide parameters. Alternatively, `remote_path` can be used to specify the url directly.
 
@@ -135,12 +140,13 @@ The defaults can be changed in your app/config.yml file with the following forma
 
 ```yaml
 brunops_select24entity:
-    minimum_input_length: 2
-    page_limit: 8
-    allow_clear: true
-    delay: 500
-    language: fr
-    cache: false
+  minimum_input_length: 2
+  page_limit: 8
+  allow_clear: true
+  delay: 500
+  language: fr
+  cache: false
+  cache_timeout: 0
 ```
 
 ## AJAX Response
@@ -160,7 +166,7 @@ If you want to use [Select2 Tags fields](https://select2.github.io/examples.html
 
 ```javascript
 $(".select24entity").select24entity({
-    tags: true
+  tags: true
 });
 ```
 
@@ -188,3 +194,90 @@ public function reverseTransform($entities) {
   return $entities;
 }
 ```
+
+##Custom option text##
+If you need more flexibility in what you display as the text for each option, such as displaying the values of several fields from your entity or showing an image inside, you may define your own custom transformer.
+Your transformer must implement DataTransformerInterface. The easiest way is probably to extend EntityToPropertyTransformer or EntitiesToPropertyTransformer and redefine the transform() method. This way you can return as `text` anything you want, not just one entity property.
+
+Here's an example that returns the country name and continent (two different properties in the Country entity):
+```php
+$builder
+  ->add('country', Select24EntityType::class, [
+    'multiple' => true,
+    'remote_route' => 'brunops_test_default_countryquery',
+    'class' => '\Brunops\TestBundle\Entity\Country',
+    'transformer' => '\Brunops\TestBundle\Form\DataTransformer\CountryEntitiesToPropertyTransformer',
+  ]);
+```
+In transform sets data array like this:
+```php
+$data[] = array(
+  'id' => $country->getId(),
+  'text' => $country->getName().' ('.$country->getContinent()->getName().')',
+);
+```
+Your custom transformer and respectively your Ajax controller should return an array in the following format:
+```javascript
+[
+  { id: 1, text: 'United Kingdom (Europe)' },
+  { id: 1, text: 'China (Asia)' }
+]
+```
+
+###Templating###
+
+If you need [Templating](https://select2.github.io/examples.html#templating) in Select2, you could consider the following example that shows the country flag next to each option.
+
+Your custom transformer should return data like this:
+```javascript
+[
+  { id: 1, text: 'United Kingdom (Europe)', img: 'images/flags/en.png' },
+  { id: 2, text: 'China (Asia)', img: 'images/flags/ch.png' }
+]
+```
+You need to define your own JavaScript function `select24entityAjax` which extends the original one `select24entity` and display custom template with image:
+```javascript
+$.fn.select24entityAjax = function(action) {
+  var action = action || {};
+  var template = function (item) {
+    var img = item.img || null;
+    if (!img) {
+      if (item.element && item.element.dataset.img) {
+        img = item.element.dataset.img;
+      } else {
+        return item.text;
+      }
+    }
+    return $(
+      '<span><img src="' + img + '" class="img-circle img-sm"> ' + item.text + '</span>'
+    );
+  };
+  this.select24entity($.extend(action, {
+    templateResult: template,
+    templateSelection: template
+  }));
+  return this;
+};
+$('.select2entity').select24entityAjax();
+```
+This script will add the functionality globally for all elements with class `select24entity`, but if the `img` is not passed it will work as the original `select24entity`.
+
+You also will need to override the following block in your template:
+```twig
+{% block brunops_select24entity_widget_select_option %}
+  <option value="{{ label.id }}" selected="selected"
+    {% for key, data in label %}
+      {% if key not in ['id', 'text'] %} data-{{ key }}="{{ data }}"{% endif %}
+    {% endfor %}>
+    {{ label.text }}
+  </option>
+{% endblock %}
+```
+This block adds all additional data needed to the JavaScript function `select24entityAjax`, like data attribute. In this case we are passing `data-img`.
+
+##Embed Collection Forms##
+If you use [Embedded Collection Forms](http://symfony.com/doc/current/cookbook/form/form_collections.html) and [data-prototype](http://symfony.com/doc/current/cookbook/form/form_collections.html#allowing-new-tags-with-the-prototype) to add new elements in your form, you will need the following JavaScript that will listen for adding an element `.select24entity`:
+```javascript
+$('body').on('click', '[data-prototype]', function(e) {
+  $(this).prev().find('.select24entity').last().select24entity();
+});

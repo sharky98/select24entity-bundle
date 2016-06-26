@@ -2,6 +2,7 @@
   {% set attr = attr|merge({
     'data-ajax--url':remote_path,
     'data-ajax--cache': cache ? 'true' : 'false',
+    'data-ajax--cache-timeout': cache_timeout|default(0),
     'data-ajax--delay':delay,
     'data-ajax--data-type':"json",
     'data-language':language,
@@ -22,7 +23,9 @@
     <select {{ block('widget_attributes') }}>
       {% if value is iterable %}
         {% for id, label in value %}
-          <option value="{{ id }}" selected="selected">{{ label }}</option>
+          {% block brunops_select24entity_widget_select_option %}
+            <option value="{{ id }}" selected="selected">{{ label }}</option>
+          {% endblock %}
         {% endfor %}
       {% endif %}
     </select>

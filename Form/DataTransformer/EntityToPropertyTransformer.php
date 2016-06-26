@@ -2,8 +2,10 @@
 
 namespace Brunops\Select24EntityBundle\Form\DataTransformer;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Exception\DriverException;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
@@ -14,7 +16,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  */
 class EntityToPropertyTransformer implements DataTransformerInterface {
 
-  /** @var EntityManager */
+  /** @var EntityManagerInterface */
   protected $em;
 
   /** @var  string */
@@ -23,15 +25,20 @@ class EntityToPropertyTransformer implements DataTransformerInterface {
   /** @var  string */
   protected $textProperty;
 
+  /** @var  string */
+  protected $primaryKey;
+
   /**
-   * @param EntityManager $em
+   * @param EntityManagerInterface $em
    * @param string $class
    * @param string|null $textProperty
+   * @param string $primaryKey
    */
-  public function __construct(EntityManager $em, $class, $textProperty = null) {
+  public function __construct(EntityManagerInterface $em, $class, $textProperty = null, $primaryKey = 'id') {
     $this->em = $em;
     $this->className = $class;
     $this->textProperty = $textProperty;
+    $this->primaryKey = $primaryKey;
   }
 
   /**
@@ -42,15 +49,15 @@ class EntityToPropertyTransformer implements DataTransformerInterface {
    */
   public function transform($entity) {
     $data = array();
-    if (null === $entity) {
+
+    if (empty($entity)) {
       return $data;
     }
+
     $accessor = PropertyAccess::createPropertyAccessor();
 
     $text = is_null($this->textProperty) ? (string) $entity : $accessor->getValue($entity, $this->textProperty);
-
-    $data[$accessor->getValue($entity, 'id')] = $text;
-
+    $data[$accessor->getValue($entity, $this->primaryKey)] = $text;
     return $data;
   }
 
@@ -61,11 +68,19 @@ class EntityToPropertyTransformer implements DataTransformerInterface {
    * @return mixed|null|object
    */
   public function reverseTransform($value) {
-    if (null === $value) {
+    if (empty($value)) {
       return null;
     }
+
     $repo = $this->em->getRepository($this->className);
-    $entity = $repo->find($value);
+
+    try {
+      $entity = $repo->find($value);
+    } catch (DriverException $ex) {
+      // this will happen if the form submits invalid data
+      throw new TransformationFailedException(sprintf('The choice "%s" does not exist or is not unique', $value));
+    }
+
     if (!$entity) {
       return null;
     }

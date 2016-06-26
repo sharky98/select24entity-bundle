@@ -21,12 +21,7 @@ class BrunopsSelect24EntityExtension extends Extension {
     $configuration = new Configuration();
     $config = $this->processConfiguration($configuration, $configs);
 
-    // set parameters with these settings so they'll be available in the service definition xml
-    $varNames = ['minimum_input_length', 'page_limit', 'allow_clear', 'delay', 'language', 'cache'];
-
-    foreach ($varNames as $varName) {
-      $container->setParameter("brunops_select24entity.$varName", $config[$varName]);
-    }
+    $container->setParameter("tetranz_select2_entity.config", $config);
 
     $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
     $loader->load('services.xml');

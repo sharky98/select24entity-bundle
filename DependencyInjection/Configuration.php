@@ -27,6 +27,7 @@ class Configuration implements ConfigurationInterface {
             ->scalarNode('delay')->defaultValue(250)->end()
             ->scalarNode('language')->defaultValue('en')->end()
             ->scalarNode('cache')->defaultTrue()->end()
+            ->scalarNode('cache_timeout')->defaultValue(60000)->end()
             ->end();
 
     return $treeBuilder;
