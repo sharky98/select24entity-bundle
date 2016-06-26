@@ -2,6 +2,7 @@
 
 namespace Brunops\Select24EntityBundle\Form\DataTransformer;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\DataTransformerInterface;
